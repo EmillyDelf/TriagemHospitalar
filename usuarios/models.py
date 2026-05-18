@@ -4,7 +4,7 @@ from django.db import models
 class Usuario(AbstractUser):
     TIPOS = (
         ('E', 'Enfermeiro'),
-        ('M', 'Médico'),
+        ('T', 'Tecnico de Enfermagem'),
         ('A', 'Administrador'),
     )
     tipo = models.CharField(max_length=1, choices=TIPOS, default='E')
