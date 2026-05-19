@@ -1,0 +1,386 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: #d4e6ff;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1f2a37;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  margin: 0;
+  width: 100%;
+  border-radius: 0;
+  padding: 10px 56px;
+  gap: 32px;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 10px 20px rgba(0, 0, 0, 0.08);
+
+  transition: 0.2s ease;
+}
+.titulo {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+.titulo h1 {
+  font-size: 35px;
+  margin: 4px 0 18px;
+  font-weight: bold;
+}
+
+.cinza {
+  color: gray;
+}
+.navegacao {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 32px;
+  margin-left: auto;
+  text-align: right;
+}
+
+.navegar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navegar a.Cadastro {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #01a501;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 10px 20px rgba(0, 0, 0, 0.08);
+
+  transition: 0.2s ease;
+}
+.navegar a.Sair {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #ff0505;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 10px 20px rgba(0, 0, 0, 0.08);
+
+  transition: 0.2s ease;
+}
+
+.navegar a.Cadastro:hover {
+  background: #1a9a1a;
+}
+
+.navegar a.Sair:hover {
+  background: #e00000;
+}
+
+.abaixo {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.navegacao h3,
+.navegacao h2,
+.navegacao time {
+  margin: 0;
+}
+
+.container {
+  margin: 25px;
+  padding: 10px;
+}
+
+.grid {
+  background-color: white;
+  border-radius: 14px;
+  padding: 22px;
+  min-height: auto;
+  margin-top: 20px;
+  margin-bottom: 18px;
+
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 10px 20px rgba(0, 0, 0, 0.08);
+
+  transition: 0.2s ease;
+}
+.fa-solid.fa-heart-pulse {
+  color: red;
+}
+.fa-solid.fa-user,
+.fa-solid.fa-temperature-half,
+.fa-solid.fa-lungs {
+  color: rgb(135, 184, 252);
+}
+
+.formularios-dados form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
+  margin-top: 24px;
+}
+
+.campo-formulario {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo-largo {
+  grid-column: 1 / -1;
+}
+
+.formularios-dados label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #323232;
+}
+
+.formularios-dados input,
+.formularios-dados select {
+  width: 100%;
+  min-height: 54px;
+  padding: 14px 16px;
+  border: 1px solid #8d8d8d;
+  border-radius: 14px;
+  background: #ffffff;
+  font-size: 16px;
+  color: #111827;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.formularios-dados input::placeholder {
+  color: #94a3b8;
+}
+
+.formularios-dados input:focus,
+.formularios-dados select:focus {
+  outline: none;
+  border-color: #5b8def;
+  box-shadow: 0 0 0 4px rgba(91, 141, 239, 0.16);
+  background: #ffffff;
+}
+
+.formularios-dados input:hover,
+.formularios-dados select:hover {
+  border-color: #94b3f4;
+}
+
+.sintomas-paciente {
+  padding: 22px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border: 1px solid #e6f4ff;
+}
+
+.sintomas-paciente h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  color: #0f1724;
+  margin-bottom: 14px;
+}
+
+.sintomas-paciente .sintomas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sintomas-paciente textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d9eefc;
+  background: #ffffff;
+  font-size: 15px;
+  color: #111827;
+}
+.fa-solid.fa-file-lines {
+  color: #01a501;
+}
+.info-profissional {
+  text-align: center;
+  background-color: #ffffff;
+  padding: 15px;
+  margin-left: 150px;
+  margin-right: 150px;
+  border-radius: 15px;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 10px 20px rgba(0, 0, 0, 0.08);
+
+  transition: 0.2s ease;
+}
+
+.info h3 {
+  margin-top: 7px;
+}
+.classificacao-risco button {
+  display: block;
+  width: 90%;
+  margin: 0 auto;
+  margin-bottom: 15px;  
+  padding: 25px;
+  text-decoration: none;
+}
+.classificacao-risco .btn-risco {
+  display: inline-block;
+  width: auto;
+  margin: 6px 6px 12px 6px;
+  padding: 8px 14px;
+
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 5px;
+  border-radius: 10px;
+  text-align: left;
+}
+
+button.risco-azul {
+  border-color: #0ea5ff;
+  color: #0055ff;
+  text-align: left;
+  text-decoration: none;
+}
+
+button.risco-verde {
+  background: #f9fff9;
+  color: #fff;
+   text-align: left;
+}
+
+button.risco-amarelo {
+  border-color: #ffff00;
+  color: #def700;
+  text-align: left;
+}
+button.risco-laranja {
+  background: #f97316;
+  color: #fff;
+  text-align: left;
+}
+button.risco-vermelho {
+  background: #ef4444;
+  color: #fff;
+  text-align: left;
+}
+@media (max-width: 768px) {
+  .sintomas-paciente {
+    padding: 16px;
+  }
+  .sintomas-paciente textarea {
+    min-height: 90px;
+  }
+}
+
+.pressao-group {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.pressao-group span {
+  font-weight: 700;
+  color: #64748b;
+}
+
+.Finalizar {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.Finalizar button {
+  display: inline-block;
+  padding: 20px 25px;
+  border: none;
+  border-radius: 12px;
+  background: #2a7ddc;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(91, 141, 239, 0.22);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+  width: 70%;
+  height: 50%;
+}
+
+.Finalizar button:hover {
+  background: #5792ff;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(91, 141, 239, 0.28);
+}
+
+@media (max-width: 768px) {
+  .cabecalho {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 18px 20px;
+  }
+
+  .navegacao {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .navegar {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .abaixo {
+    text-align: left;
+  }
+
+  .grid {
+    padding: 20px;
+  }
+
+  .formularios-dados form {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .pressao-group {
+    grid-template-columns: 1fr;
+  }
+
+  .pressao-group span {
+    text-align: center;
+  }
+}
