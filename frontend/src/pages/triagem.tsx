@@ -127,21 +127,46 @@ export default function Triagem() {
           <div className="grid">
             <div className="classificacao-risco">
               <div className="prioridades">
-               
-                <label>Classificação de Risco</label>
-                
-                <p>Seleciona a Classificação de Risco do Paciente</p>
-                
+                <h2>
+                  <i className="fa-solid fa-circle-exclamation"> </i>
+                  Classificação de Risco
+                </h2>
+
+                <p className="cinza">
+                  Seleciona a Classificação de Risco do Paciente
+                </p>
+
                 <div className="classificacao-risco">
-                  <button className="risco-vermelho">Vermelho</button>
+                  <button className="risco-vermelho">
+                    Vermelho
+                    <p className="cinza">Emergência - Risco Imediato de Vida</p>
+                  </button>
 
-                  <button className="risco-laranja">Laranja</button>
+                  <button className="risco-laranja">
+                    Laranja
+                    <p className="cinza">
+                      Muito Urgente - Risco Potencial de Vida
+                    </p>
+                  </button>
 
-                  <button className="risco-amarelo">Amarelo</button>
+                  <button className="risco-amarelo">
+                    Amarelo
+                    <p className="cinza">Urgente - Pode esperar até 1 Hora</p>
+                  </button>
 
-                  <button className="risco-verde">Verde</button>
+                  <button className="risco-verde">
+                    Verde
+                    <p className="cinza">
+                      Pouco Urgente - Pode Esperar até 2 Horas
+                    </p>
+                  </button>
 
-                  <button className="risco-azul">Azul</button>
+                  <button className="risco-azul">
+                    Azul
+                    <p className="cinza">
+                      Não Urgente - Atendimento Ambulatorial
+                    </p>
+                  </button>
                 </div>
               </div>
             </div>

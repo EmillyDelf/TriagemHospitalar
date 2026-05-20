@@ -18,7 +18,7 @@ body {
   background-color: white;
   margin: 0;
   width: 100%;
-  border-radius: 0;
+  border-radius: 10;
   padding: 10px 56px;
   gap: 32px;
   box-shadow:
@@ -111,7 +111,7 @@ body {
 
 .grid {
   background-color: white;
-  border-radius: 14px;
+  border-radius: 10px;
   padding: 22px;
   min-height: auto;
   margin-top: 20px;
@@ -227,9 +227,8 @@ body {
   text-align: center;
   background-color: #ffffff;
   padding: 15px;
-  margin-left: 150px;
-  margin-right: 150px;
-  border-radius: 15px;
+  margin:0 25% 0 25%;
+  border-radius: 10px;
   box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.05),
     0 10px 20px rgba(0, 0, 0, 0.08);
@@ -240,14 +239,27 @@ body {
 .info h3 {
   margin-top: 7px;
 }
+.fa-circle-exclamation{
+    color: #c617fc;
+    margin-right: 11px;
+
+
+
+}
 .classificacao-risco button {
   display: block;
   width: 90%;
   margin: 0 auto;
-  margin-bottom: 15px;  
+  margin-top: 15px;  
   padding: 25px;
   text-decoration: none;
-}
+  border: 2px solid;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  
+  }
+
 .classificacao-risco .btn-risco {
   display: inline-block;
   width: auto;
@@ -258,37 +270,44 @@ body {
   font-weight: 700;
   cursor: pointer;
   border: 5px;
-  border-radius: 10px;
+  
   text-align: left;
 }
-
+.prioridades p {
+    margin-top: 11px;
+}
 button.risco-azul {
   border-color: #0ea5ff;
-  color: #0055ff;
-  text-align: left;
-  text-decoration: none;
+  background-color:#ffffff;
+  color: #000000;
+
+  
 }
 
 button.risco-verde {
-  background: #f9fff9;
-  color: #fff;
-   text-align: left;
+  border-color: #00e60c;
+  background: #ffffff;
+  color: #000000;
+ 
+  
 }
 
 button.risco-amarelo {
   border-color: #ffff00;
-  color: #def700;
-  text-align: left;
+  background-color: #ffffff;
+  color: #000000;
+
 }
 button.risco-laranja {
-  background: #f97316;
-  color: #fff;
-  text-align: left;
+  border-color: #ff9900 ;
+  background: #ffffff;
+  color: #000000;
+
 }
 button.risco-vermelho {
-  background: #ef4444;
-  color: #fff;
-  text-align: left;
+  border-color: #fe0000;
+  background: #ffffff;
+  color: #000000;
 }
 @media (max-width: 768px) {
   .sintomas-paciente {
