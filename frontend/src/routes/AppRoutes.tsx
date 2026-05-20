@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 
 import Login from "../pages/login"
 import Triagem from "../pages/triagem"
+import Fila from  "../pages/fila"
 
 export default function AppRoutes() {
 
@@ -12,7 +13,7 @@ export default function AppRoutes() {
             <Routes>
 
                 <Route
-                    path="/"
+                    path="/login"
                     element={<Login />}
                 />
 
@@ -20,6 +21,14 @@ export default function AppRoutes() {
                     path="/triagem"
                     element={<Triagem />}
                 />
+
+                <Route
+                     path="/fila"
+                     element={<Fila/>}
+                />
+                   
+
+                
 
             </Routes>
 
