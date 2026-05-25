@@ -1,9 +1,10 @@
 import "../styles/Triagem.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { Link } from "react-router-dom";
 
 export default function Triagem() {
   return (
-    <>
+    <div className="triagem-page">
       <header>
         <div className="cabecalho">
           <div className="titulo">
@@ -14,12 +15,16 @@ export default function Triagem() {
 
           <div className="navegacao">
             <div className="navegar">
-              <a className="Cadastro" href="#">
+              <Link className="Cadastro" to="/cadastro">
                 Cadastrar Paciente
-              </a>
-              <a className="Sair" href="#">
+              </Link>
+              <Link  className="Fila" to="/fila">
+                Fila
+              </Link>
+              <Link className="Sair" to="/login">
                 Sair
-              </a>
+              </Link>
+            
             </div>
           </div>
         </div>
@@ -53,6 +58,7 @@ export default function Triagem() {
                         placeholder="120"
                         min={80}
                         max={200}
+                        required
                       />
 
                       <span>X</span>
@@ -63,6 +69,7 @@ export default function Triagem() {
                         placeholder="80"
                         min={50}
                         max={130}
+                        required
                       />
                     </div>
                   </div>
@@ -78,7 +85,7 @@ export default function Triagem() {
                       id="temp"
                       name="temp"
                       placeholder="Ex: 37.5"
-                    />
+                     required/>
                   </div>
 
                   <div className="campo-formulario">
@@ -92,7 +99,7 @@ export default function Triagem() {
                       id="frequencia"
                       name="frequencia"
                       placeholder="Ex: 98"
-                    />
+                    required/>
                   </div>
                 </form>
               </div>
@@ -112,14 +119,14 @@ export default function Triagem() {
                   id="sintoma-relatado"
                   name="sintoma_relatado"
                   placeholder="Descreva os Sintomas do Paciente"
-                ></textarea>
+                required></textarea>
 
                 <h3>Observações Adicionais</h3>
                 <textarea
                   id="observacoes"
                   name="observacoes"
                   placeholder="Informações Complementares, Alergias, Medicamentos em Uso.."
-                ></textarea>
+                required></textarea>
               </form>
             </div>
           </div>
@@ -173,10 +180,11 @@ export default function Triagem() {
           </div>
 
           <div className="Finalizar">
-            <button>Finalizar</button>
+            <button><i className="fa-solid fa-check"></i>
+            {" "}{" "}Finalizar Triagem</button>
           </div>
         </div>
       </main>
-    </>
+    </div>
   );
 }

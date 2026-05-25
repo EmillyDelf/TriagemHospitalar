@@ -1,7 +1,9 @@
-import Triagem from "./pages/triagem"
+import AppRoutes from "./routes/AppRoutes"
 
 function App() {
-  return <Triagem />
+
+  return <AppRoutes />
+
 }
 
 export default App

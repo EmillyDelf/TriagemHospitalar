@@ -4,18 +4,18 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  background-color: #d4e6ff;
+.triagem-page {
+  min-height: 100svh;
+  background-color: #6aa9f7;
   font-family: Arial, Helvetica, sans-serif;
   color: #1f2a37;
 }
 
-.cabecalho {
+.triagem-page .cabecalho {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: white;
+  background-color: #F9FAFB;
   margin: 0;
   width: 100%;
   border-radius: 10;
@@ -27,21 +27,21 @@ body {
 
   transition: 0.2s ease;
 }
-.titulo {
+.triagem-page .titulo {
   display: block;
   flex: 1;
   min-width: 0;
 }
-.titulo h1 {
+.triagem-page .titulo h1 {
   font-size: 35px;
   margin: 4px 0 18px;
-  font-weight: bold;
+  font-weight: 15px;
 }
 
-.cinza {
+.triagem-page .cinza {
   color: gray;
 }
-.navegacao {
+.triagem-page .navegacao {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -51,13 +51,13 @@ body {
   text-align: right;
 }
 
-.navegar {
+.triagem-page .navegar {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.navegar a.Cadastro {
+.triagem-page .navegar a.Cadastro {
   text-decoration: none;
   color: #ffffff;
   font-weight: 700;
@@ -70,7 +70,7 @@ body {
 
   transition: 0.2s ease;
 }
-.navegar a.Sair {
+.triagem-page .navegar a.Sair {
   text-decoration: none;
   color: #ffffff;
   font-weight: 700;
@@ -83,36 +83,54 @@ body {
 
   transition: 0.2s ease;
 }
+.triagem-page .navegar a.Fila {
+  text-decoration: none;
+  color: #000000;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 10px 20px rgba(0, 0, 0, 0.08);
 
-.navegar a.Cadastro:hover {
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+.triagem-page .navegar a.Cadastro:hover {
   background: #1a9a1a;
 }
 
-.navegar a.Sair:hover {
+.triagem-page .navegar a.Sair:hover {
   background: #e00000;
 }
 
-.abaixo {
+.triagem-page .abaixo {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-.navegacao h3,
-.navegacao h2,
-.navegacao time {
+.triagem-page .navegacao h3,
+.triagem-page .navegacao h2,
+.triagem-page .navegacao time {
   margin: 0;
 }
 
-.container {
-  margin: 25px;
-  padding: 10px;
+.triagem-page .container {
+  margin: 24px auto;
+  padding: 10px 24px;
+  max-width: 1180px;
 }
 
-.grid {
-  background-color: white;
+.triagem-page .grid {
+  background-color: #F9FAFB;
   border-radius: 10px;
-  padding: 22px;
+  padding: 20px 12px;
+  max-width: 980px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   min-height: auto;
   margin-top: 20px;
   margin-bottom: 18px;
@@ -123,40 +141,40 @@ body {
 
   transition: 0.2s ease;
 }
-.fa-solid.fa-heart-pulse {
+.triagem-page .fa-solid.fa-heart-pulse {
   color: red;
 }
-.fa-solid.fa-user,
-.fa-solid.fa-temperature-half,
-.fa-solid.fa-lungs {
+.triagem-page .fa-solid.fa-user,
+.triagem-page .fa-solid.fa-temperature-half,
+.triagem-page .fa-solid.fa-lungs {
   color: rgb(135, 184, 252);
 }
 
-.formularios-dados form {
+.triagem-page .formularios-dados form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px 24px;
   margin-top: 24px;
 }
 
-.campo-formulario {
+.triagem-page .campo-formulario {
   display: flex;
   flex-direction: column;
 }
 
-.campo-largo {
+.triagem-page .campo-largo {
   grid-column: 1 / -1;
 }
 
-.formularios-dados label {
+.triagem-page .formularios-dados label {
   margin-bottom: 8px;
   font-size: 14px;
   font-weight: 700;
   color: #323232;
 }
 
-.formularios-dados input,
-.formularios-dados select {
+.triagem-page .formularios-dados input,
+.triagem-page .formularios-dados select {
   width: 100%;
   min-height: 54px;
   padding: 14px 16px;
@@ -171,31 +189,31 @@ body {
     transform 0.2s ease;
 }
 
-.formularios-dados input::placeholder {
+.triagem-page .formularios-dados input::placeholder {
   color: #94a3b8;
 }
 
-.formularios-dados input:focus,
-.formularios-dados select:focus {
+.triagem-page .formularios-dados input:focus,
+.triagem-page .formularios-dados select:focus {
   outline: none;
   border-color: #5b8def;
   box-shadow: 0 0 0 4px rgba(91, 141, 239, 0.16);
   background: #ffffff;
 }
 
-.formularios-dados input:hover,
-.formularios-dados select:hover {
+.triagem-page .formularios-dados input:hover,
+.triagem-page .formularios-dados select:hover {
   border-color: #94b3f4;
 }
 
-.sintomas-paciente {
+.triagem-page .sintomas-paciente {
   padding: 22px;
   border-radius: 12px;
   background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
   border: 1px solid #e6f4ff;
 }
 
-.sintomas-paciente h2 {
+.triagem-page .sintomas-paciente h2 {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -204,13 +222,13 @@ body {
   margin-bottom: 14px;
 }
 
-.sintomas-paciente .sintomas {
+.triagem-page .sintomas-paciente .sintomas {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.sintomas-paciente textarea {
+.triagem-page .sintomas-paciente textarea {
   width: 100%;
   min-height: 110px;
   padding: 12px;
@@ -220,15 +238,15 @@ body {
   font-size: 15px;
   color: #111827;
 }
-.fa-solid.fa-file-lines {
+.triagem-page .fa-solid.fa-file-lines {
   color: #01a501;
 }
-.info-profissional {
+.triagem-page .info-profissional {
   text-align: center;
   background-color: #ffffff;
   padding: 15px;
   margin:0 25% 0 25%;
-  border-radius: 10px;
+  border-radius: 55px;
   box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.05),
     0 10px 20px rgba(0, 0, 0, 0.08);
@@ -236,17 +254,17 @@ body {
   transition: 0.2s ease;
 }
 
-.info h3 {
+.triagem-page .info h3 {
   margin-top: 7px;
 }
-.fa-circle-exclamation{
+.triagem-page .fa-circle-exclamation{
     color: #c617fc;
     margin-right: 11px;
 
 
 
 }
-.classificacao-risco button {
+.triagem-page .classificacao-risco button {
   display: block;
   width: 90%;
   margin: 0 auto;
@@ -260,7 +278,7 @@ body {
   
   }
 
-.classificacao-risco .btn-risco {
+.triagem-page .classificacao-risco .btn-risco {
   display: inline-block;
   width: auto;
   margin: 6px 6px 12px 6px;
@@ -273,10 +291,10 @@ body {
   
   text-align: left;
 }
-.prioridades p {
+.triagem-page .prioridades p {
     margin-top: 11px;
 }
-button.risco-azul {
+.triagem-page button.risco-azul {
   border-color: #0ea5ff;
   background-color:#ffffff;
   color: #000000;
@@ -284,7 +302,7 @@ button.risco-azul {
   
 }
 
-button.risco-verde {
+.triagem-page button.risco-verde {
   border-color: #00e60c;
   background: #ffffff;
   color: #000000;
@@ -292,59 +310,68 @@ button.risco-verde {
   
 }
 
-button.risco-amarelo {
+.triagem-page button.risco-amarelo {
   border-color: #ffff00;
   background-color: #ffffff;
   color: #000000;
 
 }
-button.risco-laranja {
+.triagem-page button.risco-laranja {
   border-color: #ff9900 ;
   background: #ffffff;
   color: #000000;
 
 }
-button.risco-vermelho {
+.triagem-page button.risco-vermelho {
   border-color: #fe0000;
   background: #ffffff;
   color: #000000;
 }
 @media (max-width: 768px) {
-  .sintomas-paciente {
+  .triagem-page .container {
+    padding: 10px 14px;
+  }
+
+  .triagem-page .grid {
+    max-width: 100%;
+  }
+
+  .triagem-page .sintomas-paciente {
     padding: 16px;
   }
-  .sintomas-paciente textarea {
+  .triagem-page .sintomas-paciente textarea {
     min-height: 90px;
   }
 }
 
-.pressao-group {
+.triagem-page .pressao-group {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   gap: 12px;
   align-items: center;
 }
 
-.pressao-group span {
+.triagem-page .pressao-group span {
   font-weight: 700;
   color: #64748b;
 }
 
-.Finalizar {
+.triagem-page .Finalizar {
   width: 100%;
   text-align: center;
   margin-top: 20px;
 }
 
-.Finalizar button {
+.triagem-page .Finalizar button {
   display: inline-block;
   padding: 20px 25px;
   border: none;
   border-radius: 12px;
-  background: #2a7ddc;
+  background: #00319c;
   color: #ffffff;
   text-decoration: none;
-  font-weight: 700;
+  font-size:large;
+  font-weight: 900;
   box-shadow: 0 8px 18px rgba(91, 141, 239, 0.22);
   transition:
     transform 0.2s ease,
@@ -352,9 +379,10 @@ button.risco-vermelho {
     background-color 0.2s ease;
   width: 70%;
   height: 50%;
+  cursor:pointer;
 }
 
-.Finalizar button:hover {
+.triagem-page .Finalizar button:hover {
   background: #5792ff;
   color: white;
   transform: translateY(-1px);
@@ -362,44 +390,44 @@ button.risco-vermelho {
 }
 
 @media (max-width: 768px) {
-  .cabecalho {
+  .triagem-page .cabecalho {
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
     padding: 18px 20px;
   }
 
-  .navegacao {
+  .triagem-page .navegacao {
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
 
-  .navegar {
+  .triagem-page .navegar {
     width: 100%;
     justify-content: flex-start;
     flex-wrap: wrap;
   }
 
-  .abaixo {
+  .triagem-page .abaixo {
     text-align: left;
   }
 
-  .grid {
+  .triagem-page .grid {
     padding: 20px;
   }
 
-  .formularios-dados form {
+  .triagem-page .formularios-dados form {
     grid-template-columns: 1fr;
     gap: 16px;
   }
 
-  .pressao-group {
+  .triagem-page .pressao-group {
     grid-template-columns: 1fr;
   }
 
-  .pressao-group span {
+  .triagem-page .pressao-group span {
     text-align: center;
   }
 }

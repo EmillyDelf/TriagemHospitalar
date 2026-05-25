@@ -105,7 +105,8 @@
 }
 
 
-.informacoes-profissional input[type="text"],[type="submit"] {
+.informacoes-profissional input[type="text"],
+.informacoes-profissional input[type="submit"] {
     display: block;
     width: 70%;
     padding: 15px; 
