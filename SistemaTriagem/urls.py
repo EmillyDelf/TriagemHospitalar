@@ -1,14 +1,15 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth import views as auth_views
+from usuarios.views import LoginAPIView, LogoutAPIView
 
 urlpatterns = [
+    # Painel administrativo mantido para gerenciamento e auditoria de dados
     path('admin/', admin.site.urls),
 
-    # Rotas de Autenticação (Login/Logout)
-    path('login/', auth_views.LoginView.as_view(template_name='usuarios/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    # Endpoints de Autenticação Puros em JSON (Substituindo o MVT antigo)
+    path('api/auth/login/', LoginAPIView.as_view(), name='api_login'),
+    path('api/auth/logout/', LogoutAPIView.as_view(), name='api_logout'),
 
-    # Incluindo as rotas do app de atendimento
+    # Acoplamento das rotas de negócio (Pacientes e Triagens)
     path('', include('atendimentos.urls')),
 ]

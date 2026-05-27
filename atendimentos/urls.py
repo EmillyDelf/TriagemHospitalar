@@ -1,8 +1,13 @@
 from django.urls import path
-from .views import TriagemListView, TriagemCreateView, PacienteCreateView
+from . import views
 
 urlpatterns = [
-    path('', TriagemListView.as_view(), name='triagem_list'),
-    path('triagens/nova/', TriagemCreateView.as_view(), name='triagem_create'),
-    path('pacientes/novo/', PacienteCreateView.as_view(), name='paciente_create'),
+    # Rotas da Triagem
+    path('api/triagens/', views.TriagemListCreateAPI.as_view(), name='api_triagens'),
+    
+    # Rotas do Paciente (Criar)
+    path('api/pacientes/', views.PacienteAPI.as_view(), name='api_pacientes_root'),
+    
+    # Rotas do Paciente por Identificador Único - Edição (PUT) e Exclusão (DELETE)
+    path('api/pacientes/<int:pk>/', views.PacienteAPI.as_view(), name='api_pacientes_detail'),
 ]
