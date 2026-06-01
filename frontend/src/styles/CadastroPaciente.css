@@ -99,7 +99,7 @@ body {
 }
 
 .endereco-grid {
-  grid-template-columns: 535px 160px;
+  grid-template-columns: 1fr 160px;
   column-gap: 30px;
   row-gap: 18px;
 }
@@ -135,12 +135,9 @@ body {
 
 .rua,
 .bairro,
-.cidade {
-  width: 535px;
-}
-
+.cidade,
 .numero {
-  width: 160px;
+  width: 100%;
 }
 
 .uf {
