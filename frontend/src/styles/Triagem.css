@@ -253,6 +253,10 @@
 
   transition: 0.2s ease;
 }
+.info-profissional h4{
+  font-size: 15px;
+
+}
 
 .triagem-page .info h3 {
   margin-top: 7px;
@@ -285,10 +289,10 @@
   padding: 8px 14px;
 
   border-radius: 8px;
-  font-weight: 700;
+  font-weight: 1300;
   cursor: pointer;
   border: 5px;
-  
+
   text-align: left;
 }
 .triagem-page .prioridades p {
@@ -326,6 +330,52 @@
   border-color: #fe0000;
   background: #ffffff;
   color: #000000;
+}
+
+
+.triagem-page button.risco-vermelho.selecionado {
+  background-color: #fe0000;
+  color: #ffffff;
+  border-color: #fe0000;
+}
+.triagem-page button.risco-vermelho.selecionado .cinza {
+  color: #ffffff;
+}
+
+.triagem-page button.risco-laranja.selecionado {
+  background-color: #ff9900;
+  color: #ffffff;
+  border-color: #ff9900;
+}
+.triagem-page button.risco-laranja.selecionado .cinza {
+  color: #ffffff;
+}
+
+.triagem-page button.risco-amarelo.selecionado {
+  background-color: #ffd400;
+  color: #ffffff;
+  border-color: #ffd400;
+}
+.triagem-page button.risco-amarelo.selecionado .cinza {
+  color: #ffffff;
+}
+
+.triagem-page button.risco-verde.selecionado {
+  background-color: #00e60c;
+  color: #ffffff;
+  border-color: #00e60c;
+}
+.triagem-page button.risco-verde.selecionado .cinza {
+  color: #ffffff;
+}
+
+.triagem-page button.risco-azul.selecionado {
+  background-color: #0ea5ff;
+  color: #ffffff;
+  border-color: #0ea5ff;
+}
+.triagem-page button.risco-azul.selecionado .cinza {
+  color: #ffffff;
 }
 @media (max-width: 768px) {
   .triagem-page .container {

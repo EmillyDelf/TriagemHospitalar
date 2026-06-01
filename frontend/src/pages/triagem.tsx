@@ -1,9 +1,15 @@
 import "../styles/Triagem.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function Triagem() {
+
+  const [riscoSelecionado, setRiscoSelecionado] = useState("");
   return (
+    
+ 
+    
     <div className="triagem-page">
       <header>
         <div className="cabecalho">
@@ -36,7 +42,7 @@ export default function Triagem() {
             <div className="info">
               <h3>Profissional</h3>
 
-              <h3 className="cinza">Rosangela</h3>
+              <h4 className="cinza">Rosangela</h4>
             </div>
           </div>
 
@@ -144,36 +150,59 @@ export default function Triagem() {
                 </p>
 
                 <div className="classificacao-risco">
-                  <button className="risco-vermelho">
-                    Vermelho
-                    <p className="cinza">Emergência - Risco Imediato de Vida</p>
-                  </button>
 
-                  <button className="risco-laranja">
-                    Laranja
-                    <p className="cinza">
-                      Muito Urgente - Risco Potencial de Vida
-                    </p>
-                  </button>
+                  <div className="classificacao-risco">
+                    <button
+                      type="button"
+                      className={`risco-vermelho ${riscoSelecionado === "vermelho" ? "selecionado" : ""}`}
+                      onClick={() => setRiscoSelecionado("vermelho")}
+                    >
+                      Vermelho
+                      <p className="cinza">Emergência - Risco Imediato de Vida</p>
+                    </button>
 
-                  <button className="risco-amarelo">
-                    Amarelo
-                    <p className="cinza">Urgente - Pode esperar até 1 Hora</p>
-                  </button>
+                    <button
+                      type="button"
+                      className={`risco-laranja ${riscoSelecionado === "laranja" ? "selecionado" : ""}`}
+                      onClick={() => setRiscoSelecionado("laranja")}
+                    >
+                      Laranja
+                      <p className="cinza">
+                        Muito Urgente - Risco Potencial de Vida
+                      </p>
+                    </button>
 
-                  <button className="risco-verde">
-                    Verde
-                    <p className="cinza">
-                      Pouco Urgente - Pode Esperar até 2 Horas
-                    </p>
-                  </button>
+                    <button
+                      type="button"
+                      className={`risco-amarelo ${riscoSelecionado === "amarelo" ? "selecionado" : ""}`}
+                      onClick={() => setRiscoSelecionado("amarelo")}
+                    >
+                      Amarelo
+                      <p className="cinza">Urgente - Pode esperar até 1 Hora</p>
+                    </button>
 
-                  <button className="risco-azul">
-                    Azul
-                    <p className="cinza">
-                      Não Urgente - Atendimento Ambulatorial
-                    </p>
-                  </button>
+                    <button
+                      type="button"
+                      className={`risco-verde ${riscoSelecionado === "verde" ? "selecionado" : ""}`}
+                      onClick={() => setRiscoSelecionado("verde")}
+                    >
+                      Verde
+                      <p className="cinza">
+                        Pouco Urgente - Pode Esperar até 2 Horas
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`risco-azul ${riscoSelecionado === "azul" ? "selecionado" : ""}`}
+                      onClick={() => setRiscoSelecionado("azul")}
+                    >
+                      Azul
+                      <p className="cinza">
+                        Não Urgente - Atendimento Ambulatorial
+                      </p>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

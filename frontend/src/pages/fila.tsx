@@ -1,7 +1,6 @@
 import { useState } from "react"
 import "../styles/Fila.css"
 import { Link } from "react-router-dom";
-
 export default function Fila() {
 	
     const [pacientes] = useState([
