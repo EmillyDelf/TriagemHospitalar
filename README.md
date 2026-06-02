@@ -1,330 +1,152 @@
-# 🏥 Sistema de Triagem Hospitalar — API RESTful
+# 🏥 Sistema de Triagem Hospitalar
 
-### Implementação do Protocolo de Manchester com Django + PostgreSQL
+API RESTful desenvolvida com Django e PostgreSQL para gerenciamento de pacientes e triagem hospitalar baseada no Protocolo de Manchester.
 
----
+## Sobre o Projeto
 
-## 📖 Sobre o Projeto
+O sistema foi desenvolvido utilizando Django com arquitetura backend desacoplada, fornecendo endpoints HTTP para autenticação, cadastro de pacientes e gerenciamento da fila de triagem.
 
-O **Sistema de Triagem Hospitalar** é uma API RESTful desenvolvida para gerenciar o fluxo clínico de pacientes em ambientes hospitalares utilizando o **Protocolo de Manchester** como mecanismo de classificação de risco.
+A classificação dos pacientes segue os níveis de prioridade do Protocolo de Manchester, permitindo que a fila seja ordenada automaticamente conforme a gravidade clínica.
 
-A aplicação foi projetada sob a arquitetura **Decoupled Backend**, atuando exclusivamente como um provedor de dados para aplicações frontend (React, Vue, Mobile Apps ou qualquer cliente HTTP), mantendo persistência em banco de dados relacional PostgreSQL.
+## Tecnologias Utilizadas
 
-O sistema automatiza o ordenamento da fila de atendimento com base na gravidade clínica, além de implementar controles rigorosos de autenticação, autorização e validação fisiológica dos dados médicos.
+* Python
+* Django
+* PostgreSQL
+* JSON
+* Python-Environ
 
----
+## Arquitetura
 
-# 🏛️ Arquitetura e Diferenciais Técnicos
+A API foi construída utilizando recursos nativos do Django, sem utilização do Django REST Framework.
 
-## ⚡ API RESTful 100% Nativa
+Principais componentes:
 
-A API foi construída utilizando exclusivamente os recursos nativos do ecossistema Django:
+* Models para persistência dos dados
+* Views baseadas em classes (`View`)
+* ORM nativa do Django
+* Respostas JSON com `JsonResponse`
+* Sistema de autenticação e sessão do Django
 
-* `View`
-* `JsonResponse`
-* ORM nativa
+## Funcionalidades
 
-Sem utilização de frameworks externos como Django REST Framework (DRF).
+### Autenticação
 
-Essa abordagem demonstra domínio completo sobre:
-
-* Ciclo de vida HTTP
-* Serialização manual
-* Controle de status codes
-* Gerenciamento de sessão
-* Segurança de requisições
-* Processamento de payloads JSON
-
----
-
-## 🔐 Controle de Acesso Baseado em Papéis (RBAC)
-
-O sistema implementa **Role-Based Access Control (RBAC)** para restringir operações críticas.
+* Login de profissionais
+* Logout de sessão
+* Controle de acesso baseado em perfil
 
 Perfis disponíveis:
 
-* **Enfermeiro**
-* **Técnico de Enfermagem**
-* **Administrador**
+* Enfermeiro
+* Técnico de Enfermagem
+* Administrador
 
-As permissões são verificadas via mixins e validações de autenticação antes da execução das operações sensíveis da API.
+### Pacientes
 
-Exemplos de proteção:
+* Cadastro de pacientes
+* Atualização de dados cadastrais
+* Exclusão de pacientes
 
-* Apenas profissionais autorizados podem alterar o estado da fila
-* Validação de sessão ativa
-* Controle de mutações clínicas
-* Auditoria de acessos
+### Triagem
 
----
+* Registro de triagens
+* Associação entre paciente e profissional responsável
+* Registro de sinais vitais
+* Classificação por prioridade clínica
+* Consulta da fila de atendimento
+* Busca de pacientes por CPF
 
-## 🧬 Validação Clínica e Sanitização de Dados
+## Ordenação da Fila
 
-O backend implementa uma camada rígida de validação fisiológica para impedir persistência de dados inválidos.
+A fila é ordenada dinamicamente conforme a prioridade atribuída durante a triagem:
 
-### Exemplos de validação:
+1. Vermelho
+2. Laranja
+3. Amarelo
+4. Verde
+5. Azul
 
-* Temperatura corporal permitida apenas entre `30°C` e `45°C`
-* Sanitização de CPF utilizando expressões regulares
-* Validação estrutural de Pressão Arterial
-* Restrição de sinais vitais biologicamente impossíveis
+Dentro de cada prioridade, o atendimento respeita a ordem cronológica de cadastro da triagem.
 
-Toda regra crítica é centralizada:
+## Validações Implementadas
 
-* Na camada ORM (`models.py`)
-* Nas views da API
-* Em validadores customizados
+* CPF sanitizado antes da persistência
+* Temperatura limitada entre 30°C e 45°C
+* Validação básica do formato da pressão arterial
+* Controle de acesso para operações restritas
 
----
-
-## 🚀 Otimização de Performance
-
-A aplicação utiliza otimizações nativas da ORM do Django para evitar gargalos de consultas.
-
----
-
-# 🛠️ Stack Tecnológica
-
-| Tecnologia     | Finalidade                             |
-| -------------- | -------------------------------------- |
-| Python 3.14+   | Linguagem principal                    |
-| Django 6.0+    | Framework backend                      |
-| PostgreSQL     | Banco de dados relacional              |
-| Python-Environ | Gerenciamento de variáveis de ambiente |
-| JSON           | Comunicação entre cliente e servidor   |
-
----
-
-# 📂 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```text
 SistemaTriagem/
+│
+├── atendimentos/
+│   ├── models.py
+│   ├── views.py
+│   └── urls.py
+│
+├── usuarios/
+│   ├── models.py
+│   ├── views.py
+│   └── admin.py
 │
 ├── SistemaTriagem/
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
 │
-├── atendimentos/
-│   ├── models.py
-│   ├── views.py
-│   ├── urls.py
-│
-├── usuarios/
-│   ├── models.py
-│   ├── views.py
-│   ├── urls.py
-│
-├── manage.py
-└── .env
+└── manage.py
 ```
 
----
+## Endpoints
 
-# 🔗 Endpoints da API
+### Autenticação
 
-## 🔐 Autenticação
+| Método | Endpoint            |
+| ------ | ------------------- |
+| POST   | `/api/auth/login/`  |
+| POST   | `/api/auth/logout/` |
 
-| Método | Endpoint            | Descrição                              | Acesso      |
-| ------ | ------------------- | -------------------------------------- | ----------- |
-| POST   | `/api/auth/login/`  | Autentica o profissional e cria sessão | Público     |
-| POST   | `/api/auth/logout/` | Encerra sessão ativa                   | Autenticado |
+### Triagens
 
----
+| Método | Endpoint                 |
+| ------ | ------------------------ |
+| GET    | `/api/triagens/`         |
+| GET    | `/api/triagens/?cpf=...` |
+| POST   | `/api/triagens/`         |
 
-## 🏥 Triagens e Fluxo Clínico
+### Pacientes
 
-| Método | Endpoint                 | Descrição                                    | Acesso               |
-| ------ | ------------------------ | -------------------------------------------- | -------------------- |
-| GET    | `/api/triagens/`         | Retorna fila ordenada por prioridade clínica | Enfermeiro / Técnico |
-| GET    | `/api/triagens/?cpf=...` | Filtra triagens por CPF                      | Enfermeiro / Técnico |
-| POST   | `/api/triagens/`         | Registra nova triagem                        | Enfermeiro / Técnico |
+| Método | Endpoint               |
+| ------ | ---------------------- |
+| POST   | `/api/pacientes/`      |
+| PUT    | `/api/pacientes/<id>/` |
+| DELETE | `/api/pacientes/<id>/` |
 
----
-
-## 👤 Pacientes
-
-| Método | Endpoint               | Descrição                       | Acesso      |
-| ------ | ---------------------- | ------------------------------- | ----------- |
-| POST   | `/api/pacientes/`      | Cadastra novo paciente          | Autenticado |
-| PUT    | `/api/pacientes/<id>/` | Atualiza cadastro do paciente   | Autenticado |
-| DELETE | `/api/pacientes/<id>/` | Remove paciente permanentemente | Autenticado |
-
----
-
-# ⚙️ Configuração do Ambiente
-
-## 1️⃣ Clonar o Repositório
-
-```bash
-git clone (https://github.com/EmillyDelf/TriagemHospitalar)
-cd SistemaTriagem
-```
-
----
-
-## 2️⃣ Criar Ambiente Virtual
-
-### Windows
+## Execução
 
 ```bash
 python -m venv venv
+
+# Windows
 venv\Scripts\activate
-```
 
-### Linux/macOS
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
----
-
-## 3️⃣ Instalar Dependências
-
-```bash
 pip install -r requirements.txt
-```
-
----
-
-# 🔐 Variáveis de Ambiente
-
-Crie um arquivo `.env` na raiz do projeto:
-
-```env
-DEBUG=True
-
-SECRET_KEY=sua_chave_secreta
-
-DB_NAME=nome_do_banco
-DB_USER=usuario_postgres
-DB_PASSWORD=senha_postgres
-DB_HOST=127.0.0.1
-DB_PORT=5432
-
-ALLOWED_HOSTS=*,localhost,127.0.0.1
-```
-
----
-
-# 🗄️ Banco de Dados
-
-## Executar Migrações
-
-```bash
-python manage.py makemigrations usuarios
-python manage.py makemigrations atendimentos
 
 python manage.py migrate
-```
 
----
-
-# ▶️ Executando o Servidor
-
-```bash
 python manage.py runserver
 ```
 
-Servidor disponível em:
+## Possíveis Evoluções
 
-```text
-http://127.0.0.1:8000/
-```
+O projeto foi desenvolvido utilizando Django nativo e pode ser expandido futuramente com:
 
----
+* Django REST Framework
+* Autenticação JWT
+* Paginação de resultados
+* Documentação automática (Swagger/OpenAPI)
+* Logs e auditoria clínica
 
-# 🔌 Integração com Frontend (React / Vue)
-
-Para aplicações SPA utilizando autenticação baseada em sessão, é obrigatório enviar cookies de credenciais em todas as requisições.
-
-## Exemplo com Axios
-
-```javascript
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: "http://127.0.0.1:8000",
-  withCredentials: true,
-});
-
-export default api;
-```
-
----
-
-# 🧪 Exemplo de Payload JSON
-
-## Cadastro de Paciente
-
-```json
-{
-  "nome": "Maria da Silva",
-  "cpf": "12345678900",
-  "idade": 42,
-  "sexo": "F"
-}
-```
-
----
-
-## Registro de Triagem
-
-```json
-{
-  "paciente_id": 1,
-  "temperatura": 37.5,
-  "pressao_arterial": "120x80",
-  "frequencia_cardiaca": 88,
-  "prioridade": "LARANJA"
-}
-```
-
----
-
-# 📌 Funcionalidades Implementadas
-
-* ✅ Cadastro de pacientes
-* ✅ Sistema de autenticação
-* ✅ Controle de sessão
-* ✅ Controle de permissões RBAC
-* ✅ Triagem clínica
-* ✅ Ordenação automática por prioridade
-* ✅ Validação de sinais vitais
-* ✅ Sanitização de CPF
-* ✅ API RESTful JSON
-* ✅ Persistência PostgreSQL
-* ✅ Proteção contra dados inválidos
-* ✅ Otimização de consultas ORM
-
----
-
-# 🔒 Segurança
-
-O projeto implementa múltiplas camadas de proteção:
-
-* Validação de autenticação
-* Controle de sessão
-* Verificação de permissões
-* Sanitização de entradas
-* Proteção ORM contra SQL Injection
-* Validação fisiológica de dados médicos
-* Tratamento de payloads inválidos
-
----
-
-# 👨‍💻 Autor
-
-Desenvolvido para fins acadêmicos, estudo avançado de backend e demonstração de domínio em:
-
-* Engenharia Backend
-* APIs RESTful
-* Django Internals
-* PostgreSQL
-* Segurança de aplicações
-* Arquitetura desacoplada
-* Sistemas hospitalares
-
----
+Essas melhorias permitiriam que a aplicação suportasse cenários com maior volume de usuários e integrações externas.
