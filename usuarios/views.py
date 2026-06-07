@@ -1,9 +1,12 @@
 import json
+import re
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+
+from .models import Usuario
 
 
 # API responsável pela autenticação dos profissionais do sistema.
@@ -49,6 +52,40 @@ class LoginAPIView(View):
 
             else:
                 return JsonResponse({"erro": "Credenciais inválidas. Usuário ou senha incorretos."}, status=401)
+
+        except Exception as e:
+            return JsonResponse({"erro": f"Falha interna no processamento do payload: {str(e)}"}, status=400)
+
+
+# API que verifica se o profissional está cadastrado e autorizado no sistema.
+@method_decorator(csrf_exempt, name='dispatch')
+class VerifyProfessionalAPIView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            body = json.loads(request.body)
+            cpf_profissional = re.sub(r'\D', '', str(body.get('cpf_profissional', '') or ''))
+            registro_profissional = str(body.get('registro_profissional', '') or '').strip()
+
+            if not cpf_profissional or not registro_profissional:
+                return JsonResponse({"erro": "CPF e COREN são obrigatórios para o login."}, status=400)
+
+            try:
+                usuario = Usuario.objects.get(
+                    cpf_profissional=cpf_profissional,
+                    registro_profissional=registro_profissional,
+                    tipo__in=['E', 'T'],
+                    is_active=True
+                )
+            except Usuario.DoesNotExist:
+                return JsonResponse({"erro": "Credenciais inválidas. Profissional não cadastrado ou dados incorretos."}, status=401)
+
+            return JsonResponse({
+                "mensagem": "Profissional autenticado com sucesso.",
+                "usuario": {
+                    "username": usuario.username,
+                    "tipo": usuario.tipo
+                }
+            }, status=200)
 
         except Exception as e:
             return JsonResponse({"erro": f"Falha interna no processamento do payload: {str(e)}"}, status=400)

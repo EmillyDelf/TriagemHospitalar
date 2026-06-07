@@ -18,19 +18,20 @@
 	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
 	text-align: center;
 }
+
 .cabecalho{
     display: block;
     margin: -20px -10px -10px -10px;
-
 }
+
 .cabecalho h1{
 	margin-top: -10px;
 }
 
 .cabecalho p{
 	margin-bottom: 15px;
-
 }
+
 .login-card h1 {
 	min-width: 0;
 	font-size: 30px;
@@ -48,7 +49,6 @@
     width: 100px;
 	height: auto;
 	margin: -30px auto 0;
-
 }
 
 .acessar-triagem {
@@ -92,9 +92,7 @@
     flex-wrap: wrap; 
     gap: 50px;
     align-items: center;
-	
 }
-
 
 .informacoes-profissional {
     flex-basis: 100%; 
@@ -103,7 +101,6 @@
     gap: 15px;
     margin-top: 20px; 
 }
-
 
 .informacoes-profissional input[type="text"],
 .informacoes-profissional input[type="submit"] {
@@ -114,8 +111,20 @@
     border-radius: 7px;
     text-align: left; 
     margin: 0 auto;
-   
 }
+
+.informacoes-profissional .mensagem-de-erro {
+    color: #b91c1c !important;
+    background: #fee2e2;
+    border-left: 4px solid #b91c1c;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-weight: 600;
+    margin: 0 auto 10px;
+    width: 70%;
+    text-align: left;
+}
+
 .informacoes-profissional input[type="submit"]{
 	background-color: #2563eb;
 	text-align: center;
