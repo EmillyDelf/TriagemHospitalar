@@ -1,14 +1,28 @@
 # 🏥 Sistema de Triagem Hospitalar
 
-API RESTful desenvolvida com Django e PostgreSQL para gerenciamento de pacientes e triagem hospitalar baseada no Protocolo de Manchester.
+Sistema web de triagem hospitalar desenvolvido com React, TypeScript, Django e PostgreSQL para auxiliar profissionais da saúde no gerenciamento de pacientes e classificação de risco baseada no Protocolo de Manchester.
 
-## Sobre o Projeto
+## 📋 Sobre o Projeto
 
-O sistema foi desenvolvido utilizando Django com arquitetura backend desacoplada, fornecendo endpoints HTTP para autenticação, cadastro de pacientes e gerenciamento da fila de triagem.
+O Sistema de Triagem Hospitalar foi desenvolvido com arquitetura desacoplada, composta por um frontend responsável pela interface do usuário e um backend que disponibiliza uma API RESTful para gerenciamento dos dados.
 
-A classificação dos pacientes segue os níveis de prioridade do Protocolo de Manchester, permitindo que a fila seja ordenada automaticamente conforme a gravidade clínica.
+O objetivo da aplicação é otimizar o fluxo de atendimento em unidades de saúde, permitindo o cadastro de pacientes, registro de sinais vitais, realização de triagens e organização automática da fila de atendimento conforme a gravidade clínica.
 
-## Tecnologias Utilizadas
+A classificação de risco segue os níveis de prioridade definidos pelo Protocolo de Manchester, contribuindo para um atendimento mais seguro e eficiente.
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+### Frontend
+
+* React
+* TypeScript
+* Vite
+* CSS
+* Font Awesome
+
+### Backend
 
 * Python
 * Django
@@ -16,7 +30,25 @@ A classificação dos pacientes segue os níveis de prioridade do Protocolo de M
 * JSON
 * Python-Environ
 
-## Arquitetura
+---
+
+## 🏗️ Arquitetura
+
+O sistema segue uma arquitetura desacoplada entre frontend e backend.
+
+### Frontend
+
+Responsável pela interação com os usuários através de uma interface intuitiva para profissionais da saúde.
+
+Principais funcionalidades:
+
+* Cadastro de pacientes
+* Consulta de pacientes
+* Registro de triagens
+* Visualização da fila de atendimento
+* Controle de autenticação
+
+### Backend
 
 A API foi construída utilizando recursos nativos do Django, sem utilização do Django REST Framework.
 
@@ -28,78 +60,110 @@ Principais componentes:
 * Respostas JSON com `JsonResponse`
 * Sistema de autenticação e sessão do Django
 
-## Funcionalidades
+---
 
-### Autenticação
+## ⚙️ Funcionalidades
+
+### 🔐 Autenticação
 
 * Login de profissionais
 * Logout de sessão
 * Controle de acesso baseado em perfil
 
-Perfis disponíveis:
+#### Perfis Disponíveis
 
 * Enfermeiro
 * Técnico de Enfermagem
 * Administrador
 
-### Pacientes
+### 👤 Pacientes
 
 * Cadastro de pacientes
 * Atualização de dados cadastrais
 * Exclusão de pacientes
+* Busca de pacientes por CPF
 
-### Triagem
+### 🩺 Triagem
 
 * Registro de triagens
 * Associação entre paciente e profissional responsável
 * Registro de sinais vitais
 * Classificação por prioridade clínica
 * Consulta da fila de atendimento
-* Busca de pacientes por CPF
+* Histórico de atendimentos
 
-## Ordenação da Fila
+### 📊 Sinais Vitais Registrados
 
-A fila é ordenada dinamicamente conforme a prioridade atribuída durante a triagem:
+* Temperatura corporal
+* Pressão arterial
+* Frequência cardíaca
+* Saturação de oxigênio
+* Outros parâmetros clínicos conforme necessidade
 
-1. Vermelho
-2. Laranja
-3. Amarelo
-4. Verde
-5. Azul
+---
+
+## 🚦 Classificação de Risco
+
+A fila de atendimento é organizada automaticamente conforme a prioridade atribuída durante a triagem.
+
+### Ordem de Atendimento
+
+1. 🔴 Vermelho – Emergência
+2. 🟠 Laranja – Muito Urgente
+3. 🟡 Amarelo – Urgente
+4. 🟢 Verde – Pouco Urgente
+5. 🔵 Azul – Não Urgente
 
 Dentro de cada prioridade, o atendimento respeita a ordem cronológica de cadastro da triagem.
 
-## Validações Implementadas
+---
 
-* CPF sanitizado antes da persistência
+## ✅ Validações Implementadas
+
+* Sanitização de CPF antes da persistência
 * Temperatura limitada entre 30°C e 45°C
 * Validação básica do formato da pressão arterial
 * Controle de acesso para operações restritas
+* Validação de dados obrigatórios
+* Associação obrigatória entre triagem e profissional responsável
 
-## Estrutura do Projeto
+---
+
+## 📁 Estrutura do Projeto
 
 ```text
-SistemaTriagem/
+triagem-hospitalar/
 │
-├── atendimentos/
-│   ├── models.py
-│   ├── views.py
-│   └── urls.py
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   └── package.json
 │
-├── usuarios/
-│   ├── models.py
-│   ├── views.py
-│   └── admin.py
+├── backend/
+│   ├── atendimentos/
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   └── urls.py
+│   │
+│   ├── usuarios/
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   └── admin.py
+│   │
+│   ├── SistemaTriagem/
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   │
+│   ├── manage.py
+│   └── requirements.txt
 │
-├── SistemaTriagem/
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-│
-└── manage.py
+└── README.md
 ```
 
-## Endpoints
+---
+
+## 🌐 Endpoints da API
 
 ### Autenticação
 
@@ -124,13 +188,20 @@ SistemaTriagem/
 | PUT    | `/api/pacientes/<id>/` |
 | DELETE | `/api/pacientes/<id>/` |
 
-## Execução
+---
+
+## ▶️ Como Executar o Projeto
+
+### Backend
 
 ```bash
 python -m venv venv
 
 # Windows
 venv\Scripts\activate
+
+# Linux/macOS
+source venv/bin/activate
 
 pip install -r requirements.txt
 
@@ -139,14 +210,57 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-## Possíveis Evoluções
+O backend estará disponível em:
 
-O projeto foi desenvolvido utilizando Django nativo e pode ser expandido futuramente com:
+```text
+http://localhost:8000
+```
+
+### Frontend
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+O frontend estará disponível em:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## 🎯 Benefícios do Sistema
+
+* Organização do fluxo de atendimento
+* Redução do tempo de espera
+* Priorização automática por gravidade clínica
+* Centralização das informações dos pacientes
+* Maior rastreabilidade dos atendimentos
+* Apoio à tomada de decisão clínica
+
+---
+
+## 🔮 Possíveis Evoluções
+
+O projeto pode ser expandido futuramente com:
 
 * Django REST Framework
 * Autenticação JWT
+* Swagger/OpenAPI
 * Paginação de resultados
-* Documentação automática (Swagger/OpenAPI)
-* Logs e auditoria clínica
+* Auditoria de operações
+* Logs clínicos
+* Dashboard com indicadores
+* Notificações em tempo real
+* Integração com sistemas hospitalares
 
-Essas melhorias permitiriam que a aplicação suportasse cenários com maior volume de usuários e integrações externas.
+---
+
+## 📄 Licença
+
+Este projeto foi desenvolvido para fins acadêmicos, educacionais e de aprendizado em desenvolvimento web full stack utilizando React e Django.
