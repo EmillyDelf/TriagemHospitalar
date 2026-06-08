@@ -1,189 +1,119 @@
-import "../styles/Triagem.css";
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useState, type FormEvent, type MouseEvent } from "react";
+﻿import { useEffect, useState, type FormEvent } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import "../styles/Triagem.css"
 import {
-  createPaciente,
   createTriagem,
   getPacientes,
   getPrioridades,
   logoutProfessional,
-} from "../services/api";
-import type { PacienteAPI, PrioridadeAPI } from "../services/api";
+} from "../services/api"
+import type { PacienteAPI, PrioridadeAPI } from "../services/api"
+
+const riscos = [
+  { nome: "Vermelho", classe: "risco-vermelho", descricao: "Emergência" },
+  { nome: "Laranja", classe: "risco-laranja", descricao: "Muito Urgente" },
+  { nome: "Amarelo", classe: "risco-amarelo", descricao: "Urgente" },
+  { nome: "Verde", classe: "risco-verde", descricao: "Pouco Urgente" },
+  { nome: "Azul", classe: "risco-azul", descricao: "Não Urgente" },
+]
 
 export default function Triagem() {
+  const navigate = useNavigate()
   const [pacientes, setPacientes] = useState<PacienteAPI[]>([])
   const [prioridades, setPrioridades] = useState<PrioridadeAPI[]>([])
-  const [pacienteId, setPacienteId] = useState("")
-  const [prioridadeId, setPrioridadeId] = useState("")
+  const [pacienteSelecionado, setPacienteSelecionado] = useState("")
   const [sistolica, setSistolica] = useState("")
   const [diastolica, setDiastolica] = useState("")
   const [temperatura, setTemperatura] = useState("")
   const [frequenciaCardiaca, setFrequenciaCardiaca] = useState("")
   const [sintomas, setSintomas] = useState("")
   const [observacoes, setObservacoes] = useState("")
+  const [prioridadeSelecionada, setPrioridadeSelecionada] = useState("")
   const [mensagem, setMensagem] = useState("")
   const [erro, setErro] = useState("")
-  const [nomePacienteNovo, setNomePacienteNovo] = useState("")
-  const [dataNascimentoNovo, setDataNascimentoNovo] = useState("")
-  const [cpfPacienteNovo, setCpfPacienteNovo] = useState("")
-
-  const prioridadesPorNome = useMemo(() => {
-    return prioridades.reduce<Record<string, PrioridadeAPI>>((acumulador, prioridade) => {
-      acumulador[prioridade.nome_prioridade.toLowerCase()] = prioridade
-      return acumulador
-    }, {})
-  }, [prioridades])
-
-  const navigate = useNavigate()
-  const pacienteSelecionado = pacienteId
-  const prioridadeSelecionada = prioridadeId || (prioridades[0] ? String(prioridades[0].id) : "")
 
   useEffect(() => {
-    async function carregarDados() {
-      try {
-        const [pacientesResponse, prioridadesResponse] = await Promise.all([
-          getPacientes(),
-          getPrioridades(),
-        ])
-
-        /* Verifica se veio de um cadastro recente, para selecionar o paciente automaticamente. */
-        const ultimoPacienteCadastrado = sessionStorage.getItem("ultimo_paciente_cadastrado")
-        let ultimoPacienteId: number | null = null
-
-        if (ultimoPacienteCadastrado) {
-          try {
-            const parsed = JSON.parse(ultimoPacienteCadastrado)
-            ultimoPacienteId = parsed?.id ?? null
-          } catch {
-            ultimoPacienteId = null
-          }
-        }
-
-        setPacientes(pacientesResponse.pacientes)
-        setPrioridades(prioridadesResponse.prioridades)
-
-        if (
-          ultimoPacienteId !== null &&
-          pacientesResponse.pacientes.some((paciente) => paciente.id === ultimoPacienteId)
-        ) {
-          /* Se o paciente recém-cadastrado existe na lista, usa seu ID no select. */
-          setPacienteId(String(ultimoPacienteId))
-          sessionStorage.removeItem("ultimo_paciente_cadastrado")
-        } else if (pacientesResponse.pacientes.length > 0) {
-          /* Seleciona o primeiro paciente carregado por padrão para mostrar a lista. */
-          setPacienteId(String(pacientesResponse.pacientes[0].id))
-        }
-      } catch (error) {
-        setErro(error instanceof Error ? error.message : "Falha ao carregar dados da triagem.")
-      }
-    }
-    
-
-    carregarDados()
+    void carregarDados()
   }, [])
 
-  async function handleCreatePaciente() {
-    const cpfLimpo = cpfPacienteNovo.replace(/\D/g, "")
+  async function carregarDados() {
+    await Promise.all([carregarPacientes(), carregarPrioridades()])
+  }
 
-    if (!nomePacienteNovo || !dataNascimentoNovo || cpfLimpo.length !== 11) {
-      setErro("Preencha nome, data de nascimento e CPF válido para cadastrar o paciente.")
-      return
-    }
-
+  async function carregarPacientes() {
     try {
-      const { id } = await createPaciente({
-        nome_paciente: nomePacienteNovo,
-        cpf_paciente: cpfLimpo,
-        data_nascimento: dataNascimentoNovo,
-      })
-
-      const novoPaciente: PacienteAPI = {
-        id,
-        nome_paciente: nomePacienteNovo,
-        cpf_paciente: cpfLimpo,
-        data_nascimento: dataNascimentoNovo,
-      }
-
-      setPacientes((atual) => [...atual, novoPaciente])
-      setPacienteId(String(id))
-      setMensagem("Paciente cadastrado com sucesso e selecionado para triagem.")
+      const response = await getPacientes()
+      setPacientes(response.pacientes)
       setErro("")
-      setNomePacienteNovo("")
-      setDataNascimentoNovo("")
-      setCpfPacienteNovo("")
     } catch (error) {
-      setMensagem("")
-      setErro(error instanceof Error ? error.message : "Falha ao cadastrar paciente.")
+      setErro(error instanceof Error ? error.message : "Falha ao carregar pacientes.")
     }
+  }
+
+  async function carregarPrioridades() {
+    try {
+      const response = await getPrioridades()
+      setPrioridades(response.prioridades)
+      setErro("")
+    } catch (error) {
+      setErro(error instanceof Error ? error.message : "Falha ao carregar prioridades.")
+    }
+  }
+
+  function getPrioridadePorNome(nome: string) {
+    return prioridades.find(
+      (prioridade) => prioridade.nome_prioridade.toLowerCase() === nome.toLowerCase(),
+    )
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const pacienteSelecionadoNumero = Number(pacienteSelecionado)
-    const prioridadeSelecionadaNumero = Number(prioridadeSelecionada)
-    const sistolicaNumero = Number(sistolica)
-    const diastolicaNumero = Number(diastolica)
-    const temperaturaNumero = Number(temperatura)
-    const frequenciaNumero = Number(frequenciaCardiaca)
-
-    if (!pacienteSelecionadoNumero || !prioridadeSelecionadaNumero) {
-      setErro("Selecione um paciente e uma prioridade.")
+    if (!pacienteSelecionado) {
+      setErro("Selecione um paciente.")
       return
     }
 
-    if (!Number.isFinite(sistolicaNumero) || !Number.isFinite(diastolicaNumero)) {
-      setErro("Informe a pressão arterial corretamente.")
+    if (!sistolica || !diastolica || !temperatura || !frequenciaCardiaca || !sintomas || !observacoes) {
+      setErro("Preencha todos os campos.")
       return
     }
 
-    if (!Number.isFinite(temperaturaNumero) || !Number.isFinite(frequenciaNumero)) {
-      setErro("Informe temperatura e frequência cardíaca.")
+    if (!prioridadeSelecionada) {
+      setErro("Selecione a classificação de risco.")
       return
     }
 
     try {
       await createTriagem({
-        paciente: pacienteSelecionadoNumero,
-        prioridade: prioridadeSelecionadaNumero,
-        pressao_arterial: `${sistolicaNumero}/${diastolicaNumero}`,
-        temperatura: temperaturaNumero,
-        frequencia_cardiaca: frequenciaNumero,
-        observacoes: [
-          sintomas ? `Sintomas relatados: ${sintomas}` : "",
-          observacoes ? `Observações adicionais: ${observacoes}` : "",
-        ]
-          .filter(Boolean)
-          .join("\n"),
+        paciente: Number(pacienteSelecionado),
+        prioridade: Number(prioridadeSelecionada),
+        pressao_arterial: `${sistolica}/${diastolica}`,
+        temperatura: Number(temperatura),
+        frequencia_cardiaca: Number(frequenciaCardiaca),
+        observacoes,
       })
 
-      setMensagem("Triagem registrada com sucesso. Redirecionando para a fila...")
+      setMensagem("Triagem registrada com sucesso.")
       setErro("")
-      setSintomas("")
-      setObservacoes("")
       setSistolica("")
       setDiastolica("")
       setTemperatura("")
       setFrequenciaCardiaca("")
-
-      navigate("/fila")
+      setSintomas("")
+      setObservacoes("")
+      setPrioridadeSelecionada("")
     } catch (error) {
       setMensagem("")
-      setErro(error instanceof Error ? error.message : "Falha ao salvar a triagem.")
+      setErro(error instanceof Error ? error.message : "Não foi possível registrar a triagem.")
     }
   }
 
-  async function handleLogout(event: MouseEvent<HTMLAnchorElement>) {
-    event.preventDefault()
-
+  async function handleLogout() {
     try {
       await logoutProfessional()
-    } catch {
-      /* Se a sessão já expirou, só limpa o estado local. */
     } finally {
-      sessionStorage.removeItem("auth_user")
-      window.location.href = "/login"
+      navigate("/login")
     }
   }
 
@@ -193,7 +123,6 @@ export default function Triagem() {
         <div className="cabecalho">
           <div className="titulo">
             <h1>Triagem - Hospital Público</h1>
-
             <h3 className="cinza">Sistema de Classificação de Risco</h3>
           </div>
 
@@ -202,13 +131,12 @@ export default function Triagem() {
               <Link className="Cadastro" to="/cadastro">
                 Cadastrar Paciente
               </Link>
-              <Link  className="Fila" to="/fila">
+              <Link className="Fila" to="/fila">
                 Fila
               </Link>
               <Link className="Sair" to="/login" onClick={handleLogout}>
                 Sair
               </Link>
-            
             </div>
           </div>
         </div>
@@ -220,117 +148,75 @@ export default function Triagem() {
           {erro && <p className="cinza">{erro}</p>}
 
           <div className="grid">
+            <div className="campo-formulario campo-largo">
+              <label>Paciente</label>
+
+              <select
+                value={pacienteSelecionado}
+                onChange={(e) => setPacienteSelecionado(e.target.value)}
+                required
+              >
+                <option value="">Selecione um paciente</option>
+
+                {pacientes.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nome_paciente} - {p.cpf_paciente}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid">
             <div className="dados-paciente sinais-vitais">
               <h2>
                 <i className="fa-solid fa-heart-pulse"></i> Sinais Vitais
               </h2>
 
               <div className="formularios-dados">
-                  <div className="campo-formulario campo-largo">
-                    <label htmlFor="paciente">Paciente</label>
-                    <select
-                      id="paciente"
-                      value={pacienteSelecionado}
-                      onChange={(event) => setPacienteId(event.target.value)}
+                <div className="campo-formulario campo-largo">
+                  <label>Pressão Arterial</label>
+
+                  <div className="pressao-group">
+                    <input
+                      type="number"
+                      placeholder="120"
+                      value={sistolica}
+                      onChange={(e) => setSistolica(e.target.value)}
                       required
-                    >
-                      <option value="" disabled>
-                        Selecione um paciente
-                      </option>
-                      {pacientes.map((paciente) => (
-                        <option key={paciente.id} value={paciente.id}>
-                          {paciente.nome_paciente} - {paciente.cpf_paciente}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="campo-formulario campo-largo cadastro-paciente-triagem">
-                    <h3>Cadastrar Novo Paciente</h3>
-                    <input
-                      type="text"
-                      placeholder="Nome do paciente"
-                      value={nomePacienteNovo}
-                      onChange={(event) => setNomePacienteNovo(event.target.value)}
                     />
-                    <input
-                      type="date"
-                      placeholder="Data de nascimento"
-                      value={dataNascimentoNovo}
-                      onChange={(event) => setDataNascimentoNovo(event.target.value)}
-                    />
-                    <input
-                      type="text"
-                      placeholder="CPF"
-                      value={cpfPacienteNovo}
-                      onChange={(event) => setCpfPacienteNovo(event.target.value)}
-                    />
-                    <button type="button" className="botao-cadastrar-paciente" onClick={handleCreatePaciente}>
-                      Cadastrar e Selecionar
-                    </button>
-                  </div>
 
-                  <div className="campo-formulario campo-largo">
-                    <label>Pressão Arterial</label>
-
-                    <div className="pressao-group">
-                      <input
-                        type="number"
-                        name="sistolica"
-                        placeholder="120"
-                        value={sistolica}
-                        onChange={(event) => setSistolica(event.target.value)}
-                        min={80}
-                        max={200}
-                        required
-                      />
-
-                      <span>X</span>
-
-                      <input
-                        type="number"
-                        name="diastolica"
-                        placeholder="80"
-                        value={diastolica}
-                        onChange={(event) => setDiastolica(event.target.value)}
-                        min={50}
-                        max={130}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="campo-formulario">
-                    <label htmlFor="temp">
-                      <i className="fa-solid fa-temperature-half"></i>{" "}
-                      Temperatura (°C)
-                    </label>
+                    <span>X</span>
 
                     <input
                       type="number"
-                      id="temp"
-                      name="temp"
-                      placeholder="Ex: 37.5"
-                      value={temperatura}
-                      onChange={(event) => setTemperatura(event.target.value)}
-                      required/>
+                      placeholder="80"
+                      value={diastolica}
+                      onChange={(e) => setDiastolica(e.target.value)}
+                      required
+                    />
                   </div>
+                </div>
 
-                  <div className="campo-formulario">
-                    <label htmlFor="frequencia">
-                      <i className="fa-solid fa-heart-pulse"></i> Frequência
-                      Cardíaca
-                    </label>
+                <div className="campo-formulario">
+                  <label>Temperatura</label>
+                  <input
+                    type="number"
+                    value={temperatura}
+                    onChange={(e) => setTemperatura(e.target.value)}
+                    required
+                  />
+                </div>
 
-                    <input
-                      type="number"
-                      id="frequencia"
-                      name="frequencia"
-                      placeholder="Ex: 98"
-                      value={frequenciaCardiaca}
-                      onChange={(event) => setFrequenciaCardiaca(event.target.value)}
-                      required/>
-                  </div>
+                <div className="campo-formulario">
+                  <label>Frequência Cardíaca</label>
+                  <input
+                    type="number"
+                    value={frequenciaCardiaca}
+                    onChange={(e) => setFrequenciaCardiaca(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -338,103 +224,76 @@ export default function Triagem() {
           <div className="grid">
             <div className="sintomas-paciente">
               <h2>
-                <i className="fa-solid fa-file-lines"> </i>
+                <i className="fa-solid fa-file-lines"></i>
                 Sintomas e Observações
               </h2>
 
               <div className="sintomas">
-                <h3>Sintomas relatados</h3>
                 <textarea
-                  id="sintoma-relatado"
-                  name="sintoma_relatado"
-                  placeholder="Descreva os Sintomas do Paciente"
+                  placeholder="Sintomas do paciente"
                   value={sintomas}
-                  onChange={(event) => setSintomas(event.target.value)}
-                  required></textarea>
+                  onChange={(e) => setSintomas(e.target.value)}
+                  required
+                />
 
-                <h3>Observações Adicionais</h3>
                 <textarea
-                  id="observacoes"
-                  name="observacoes"
-                  placeholder="Informações Complementares, Alergias, Medicamentos em Uso.."
+                  placeholder="Observações adicionais"
                   value={observacoes}
-                  onChange={(event) => setObservacoes(event.target.value)}
-                  required></textarea>
+                  onChange={(e) => setObservacoes(e.target.value)}
+                  required
+                />
               </div>
             </div>
           </div>
 
           <div className="grid">
             <div className="classificacao-risco">
-              <div className="prioridades">
-                <h2>
-                  <i className="fa-solid fa-circle-exclamation"> </i>
-                  Classificação de Risco
-                </h2>
+              <h2>
+                <i className="fa-solid fa-circle-exclamation"></i>
+                Classificação de Risco
+              </h2>
 
-                <p className="cinza">
-                  Seleciona a Classificação de Risco do Paciente
-                </p>
+              <p className="cinza">
+                Selecione a classificação de risco do paciente
+              </p>
 
-                <div className="classificacao-risco">
-                  <div className="classificacao-risco">
-                    {[
-                      {
-                        nome: "Vermelho",
-                        classe: "risco-vermelho",
-                        descricao: "Emergência - Risco Imediato de Vida",
-                      },
-                      {
-                        nome: "Laranja",
-                        classe: "risco-laranja",
-                        descricao: "Muito Urgente - Risco Potencial de Vida",
-                      },
-                      {
-                        nome: "Amarelo",
-                        classe: "risco-amarelo",
-                        descricao: "Urgente - Pode esperar até 1 Hora",
-                      },
-                      {
-                        nome: "Verde",
-                        classe: "risco-verde",
-                        descricao: "Pouco Urgente - Pode Esperar até 2 Horas",
-                      },
-                      {
-                        nome: "Azul",
-                        classe: "risco-azul",
-                        descricao: "Não Urgente - Atendimento Ambulatorial",
-                      },
-                    ].map((risco) => {
-                      const prioridade = prioridadesPorNome[risco.nome.toLowerCase()]
+              <div className="classificacao-risco">
+                {riscos.map((risco) => {
+                  const prioridade = getPrioridadePorNome(risco.nome)
+                  const disponivel = Boolean(prioridade)
 
-                      if (!prioridade) {
-                        return null
-                      }
-                    
-                      return (
-                        <button
-                          key={risco.nome}
-                          type="button"
-                          className={`${risco.classe} ${prioridadeSelecionada === String(prioridade.id) ? "selecionado" : ""}`}
-                          onClick={() => setPrioridadeId(String(prioridade.id))}
-                        >
-                          {risco.nome}
-                          <p className="cinza">{risco.descricao}</p>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
+                  return (
+                    <button
+                      key={risco.nome}
+                      type="button"
+                      className={`${risco.classe} ${
+                        prioridadeSelecionada === String(prioridade?.id)
+                          ? "selecionado"
+                          : ""
+                      }`}
+                      disabled={!disponivel}
+                      onClick={() => {
+                        if (disponivel && prioridade) {
+                          setPrioridadeSelecionada(String(prioridade.id))
+                        }
+                      }}
+                    >
+                      {risco.nome}
+                      <p className="cinza">{risco.descricao}</p>
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
 
           <div className="Finalizar">
-            <button type="submit"><i className="fa-solid fa-check"></i>
-            {" "}{" "}Finalizar Triagem</button>
+            <button type="submit">
+              <i className="fa-solid fa-check"></i> Finalizar Triagem
+            </button>
           </div>
         </form>
       </main>
     </div>
-  );
+  )
 }

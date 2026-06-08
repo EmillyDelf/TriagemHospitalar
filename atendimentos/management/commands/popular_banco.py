@@ -17,16 +17,24 @@ class Command(BaseCommand):
 
         prioridades = [
             Prioridade.objects.get_or_create(
-                nome_prioridade="Verde",
-                defaults={"tempo_estimado": 120}
+                nome_prioridade="Vermelho",
+                defaults={"tempo_estimado": 0}
+            )[0],
+            Prioridade.objects.get_or_create(
+                nome_prioridade="Laranja",
+                defaults={"tempo_estimado": 10}
             )[0],
             Prioridade.objects.get_or_create(
                 nome_prioridade="Amarelo",
                 defaults={"tempo_estimado": 60}
             )[0],
             Prioridade.objects.get_or_create(
-                nome_prioridade="Vermelho",
-                defaults={"tempo_estimado": 0}
+                nome_prioridade="Verde",
+                defaults={"tempo_estimado": 120}
+            )[0],
+            Prioridade.objects.get_or_create(
+                nome_prioridade="Azul",
+                defaults={"tempo_estimado": 240}
             )[0],
         ]
 
