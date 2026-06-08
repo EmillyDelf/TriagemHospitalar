@@ -2,30 +2,31 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import Usuario
 
+
+# Personaliza a administração dos profissionais de saúde no Django Admin.
 @admin.register(Usuario)
 class CustomUserAdmin(UserAdmin):
     """
-    Configuração avançada para o modelo de Usuário customizado (Profissional de Saúde).
-    Adapta a interface do Django Admin para expor as propriedades hospitalares.
+    Configuração do painel administrativo para o modelo Usuario.
     """
-    # Colunas que serão exibidas na tabela principal de listagem
-    # ALINHAMENTO: Substituído 'tipo_profissional' por 'tipo' para bater com as views
+
+    # Colunas exibidas na listagem principal.
     list_display = ('username', 'email', 'tipo', 'is_staff', 'is_active')
-    
-    # Filtros laterais para segmentação rápida na gestão do hospital
+
+    # Filtros disponíveis na barra lateral.
     list_filter = ('tipo', 'is_staff', 'is_superuser', 'is_active')
-    
-    # Permite buscar profissionais por nome de usuário, e-mail ou registro do conselho
+
+    # Campos utilizados na pesquisa de usuários.
     search_fields = ('username', 'email', 'registro_profissional')
-    
-    # Campos exibidos na tela de EDIÇÃO de um usuário existente
+
+    # Campos adicionais exibidos na edição de usuários.
     fieldsets = UserAdmin.fieldsets + (
         ('Informações Hospitalares', {
             'fields': ('tipo', 'cpf_profissional', 'registro_profissional')
         }),
     )
 
-    # Campos exibidos na tela de CRIAÇÃO de um novo usuário profissional
+    # Campos adicionais exibidos no cadastro de novos usuários.
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Informações Hospitalares', {
             'fields': ('tipo', 'cpf_profissional', 'registro_profissional'),
