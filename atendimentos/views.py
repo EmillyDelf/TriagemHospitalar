@@ -33,7 +33,10 @@ class TriagemListCreateAPI(LoginRequiredMixin, UserPassesTestMixin, View):
         cpf = request.GET.get('cpf')
         if cpf:
             cpf_limpo = re.sub(r'\D', '', cpf)
-            queryset = queryset.filter(paciente__cpf_paciente=cpf_limpo)
+            if cpf_limpo:
+                queryset = queryset.filter(paciente__cpf_paciente__icontains=cpf_limpo)
+            else:
+                queryset = queryset.filter(paciente__nome_paciente__icontains=cpf)
 
         # Ordenação da fila conforme o Protocolo de Manchester.
         # Primeiro pela prioridade clínica e depois pelo horário

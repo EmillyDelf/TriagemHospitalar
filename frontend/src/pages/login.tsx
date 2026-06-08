@@ -2,14 +2,15 @@ import "../styles/login.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import iconHospital from "../assets/img-hospital.jpg";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginProfessional } from "../services/api";
 
 export default function Login() {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const perfil = formData.get("selecionar")?.toString() || "";
@@ -34,21 +35,7 @@ export default function Login() {
     setErrorMessage("");
 
     try {
-      const response = await fetch('/api/auth/verify-professional/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          cpf_profissional: cpf,
-          registro_profissional: coren,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        setErrorMessage(result.erro || 'Credenciais inválidas.');
-        return;
-      }
+      const result = await loginProfessional(cpf, coren);
 
       const tipoEsperado = perfil === 'enfermeiro' ? 'E' : 'T';
       if (result.usuario?.tipo !== tipoEsperado) {
@@ -56,9 +43,11 @@ export default function Login() {
         return;
       }
 
+      sessionStorage.setItem('auth_user', JSON.stringify(result.usuario));
+
       navigate('/triagem');
     } catch (error) {
-      setErrorMessage('Falha ao verificar o login. Tente novamente mais tarde.');
+      setErrorMessage(error instanceof Error ? error.message : 'Falha ao verificar o login. Tente novamente mais tarde.');
     }
   }
 

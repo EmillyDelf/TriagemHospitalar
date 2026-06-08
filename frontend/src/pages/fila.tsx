@@ -1,57 +1,46 @@
-import { useState } from "react"
+import { useEffect, useMemo, useState, type FormEvent } from "react"
 import "../styles/Fila.css"
 import { Link } from "react-router-dom";
+import { getTriagens } from "../services/api";
+import type { TriagemAPI } from "../services/api";
+
+function getPrioridadeKey(prioridade?: string | null) {
+    const nome = (prioridade || "").toLowerCase()
+
+    if (nome.includes("vermelho")) return "emergencia"
+    if (nome.includes("laranja")) return "muito-urgente"
+    if (nome.includes("amarelo")) return "urgente"
+    if (nome.includes("verde")) return "pouco-urgente"
+    if (nome.includes("azul")) return "nao-urgente"
+
+    return "nao-urgente"
+}
+
 export default function Fila() {
-	
-    const [pacientes] = useState([
+    const [triagens, setTriagens] = useState<TriagemAPI[]>([])
+    const [buscaCpf, setBuscaCpf] = useState("")
+    const [erro, setErro] = useState("")
 
-        {	id:1,
-            nome: "Maria da Silva",
-            cpf: "123.456.789-00",
-            prioridade: "Emergência",
-            prioridadeKey: "emergencia",
-			temperatura: 40.5,
-			frequencia_cardiaca: "99",
-            pressao:"17/9",
-			data_e_horario: "12/05/2026 14:30"
-        },
-
-        {	id:2,
-            nome: "Pedro da Silva",
-            cpf: "001.002.020-50",
-            prioridade: "Não Urgente",
-            prioridadeKey: "nao-urgente",
-			temperatura: 37.5,
-			frequencia_cardiaca: "99",
-			pressao:"12/9",
-            data_e_horario: "12/05/2026 15:30"
-        },
-
-        {	id:3,
-            nome: "Maria da Silva",
-            cpf: "123.456.789-00",
-            prioridade: "Pouco Urgente",
-            prioridadeKey: "pouco-urgente",
-			temperatura: 36.5,
-			frequencia_cardiaca: "99",
-			pressao:"14/9",
-            data_e_horario: "12/05/2026 15:00"
-        },
-        {	id:4,
-            nome: "Maria da Silva",
-            cpf: "123.456.789-00",
-            prioridade: "Pouco Urgente",
-            prioridadeKey: "pouco-urgente",
-			temperatura: 36.5,
-			frequencia_cardiaca: "99",
-			pressao:"14/9",
-            data_e_horario: "12/05/2026 15:00"
+    async function carregarTriagens(cpf?: string) {
+        try {
+            const response = await getTriagens(cpf)
+            setTriagens(response.triagens)
+            setErro("")
+        } catch (error) {
+            setErro(error instanceof Error ? error.message : "Falha ao carregar a fila.")
         }
+    }
 
-    ])
+    useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            void carregarTriagens()
+        }, 0)
 
-    const contagemPorPrioridade = pacientes.reduce((acumulador, paciente) => {
-        const chave = paciente.prioridadeKey
+        return () => window.clearTimeout(timeoutId)
+    }, [])
+
+    const contagemPorPrioridade = triagens.reduce((acumulador, triagem) => {
+        const chave = getPrioridadeKey(triagem.prioridade)
         acumulador[chave] = (acumulador[chave] ?? 0) + 1
         return acumulador
     }, {
@@ -61,6 +50,26 @@ export default function Fila() {
         "pouco-urgente": 0,
         "nao-urgente": 0,
     } as Record<string, number>)
+
+    const triagensOrdenadas = useMemo(() => {
+        return [...triagens].sort((a, b) => {
+            const ordem = {
+                vermelho: 1,
+                laranja: 2,
+                amarelo: 3,
+                verde: 4,
+                azul: 5,
+            }
+
+            return (ordem[getPrioridadeKey(a.prioridade) as keyof typeof ordem] ?? 99) -
+                (ordem[getPrioridadeKey(b.prioridade) as keyof typeof ordem] ?? 99)
+        })
+    }, [triagens])
+
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        await carregarTriagens(buscaCpf.trim())
+    }
 
     const indicadores = [
         { label: "Vermelho", className: "container-vermelho", count: contagemPorPrioridade.emergencia },
@@ -79,8 +88,9 @@ export default function Fila() {
                 </div>
 
                 <p>Sistema de Gereciamento Hospitalar</p>
+                {erro && <p>{erro}</p>}
                 <div className="indicadores">
-                    <form className="buscar">
+                    <form className="buscar" onSubmit={handleSubmit}>
                         <div className="buscar-campo">
                             <i className="fa-solid fa-magnifying-glass"></i>
                             <input
@@ -88,6 +98,8 @@ export default function Fila() {
                                 name="buscar"
                                 id="Buscar"
                                 placeholder="Busque Por Nome ou CPF"
+                                value={buscaCpf}
+                                onChange={(event) => setBuscaCpf(event.target.value)}
                             />
                         </div>
                     </form>
@@ -118,48 +130,51 @@ export default function Fila() {
                     </ul>
                 </div>
 
-                {pacientes.map((paciente) => (
-                    <div className="card-paciente" key={paciente.id}>
+                {triagensOrdenadas.map((triagem) => {
+                    const prioridadeKey = getPrioridadeKey(triagem.prioridade)
+
+                    return (
+                    <div className="card-paciente" key={triagem.id}>
                         <div className="grid-paciente">
                             <div className="coluna-paciente">
                                 <span className="rotulo">Nome</span>
-                                <strong>{paciente.nome}</strong>
+                                <strong>{triagem.paciente.nome}</strong>
                             </div>
 
                             <div className="coluna-paciente">
                                 <span className="rotulo">CPF</span>
-                                <strong>{paciente.cpf}</strong>
+                                <strong>{triagem.paciente.cpf}</strong>
                             </div>
 
                             <div className="coluna-paciente">
                                 <span className="rotulo">Prioridade</span>
-                                <strong className={`Prioridade ${paciente.prioridadeKey}`}>
-                                    {paciente.prioridade}
+                                <strong className={`Prioridade ${prioridadeKey}`}>
+                                    {triagem.prioridade || "Sem prioridade"}
                                 </strong>
                             </div>
 
                             <div className="coluna-paciente">
                                 <span className="rotulo">Temperatura</span>
-                                <strong>{paciente.temperatura}°C</strong>
+                                <strong>{triagem.temperatura ?? "-"}°C</strong>
                             </div>
 
                             <div className="coluna-paciente">
                                 <span className="rotulo">Frequência</span>
-                                <strong>{paciente.frequencia_cardiaca}</strong>
+                                <strong>{triagem.frequencia_cardiaca ?? "-"}</strong>
                             </div>
 
                             <div className="coluna-paciente">
                                 <span className="rotulo">Pressão</span>
-                                <strong>{paciente.pressao}</strong>
+                                <strong>{triagem.pressao_arterial}</strong>
                             </div>
 
                             <div className="coluna-paciente">
                                 <span className="rotulo">Data/Horário</span>
-                                <strong>{paciente.data_e_horario}</strong>
+                                <strong>{new Date(triagem.data_hora).toLocaleString("pt-BR")}</strong>
                             </div>
                         </div>
                     </div>
-                ))}
+                )})}
             </div>
         </main>
     )

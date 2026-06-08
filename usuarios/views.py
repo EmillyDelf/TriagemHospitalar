@@ -22,13 +22,27 @@ class LoginAPIView(View):
             body = json.loads(request.body)
             username = body.get('username')
             password = body.get('password')
+            cpf_profissional = re.sub(r'\D', '', str(body.get('cpf_profissional', '') or ''))
+            registro_profissional = str(body.get('registro_profissional', '') or '').strip()
 
-            # Validação dos campos obrigatórios para login.
-            if not username or not password:
-                return JsonResponse({"erro": "Parâmetros ausentes: Usuário e senha são obrigatórios."}, status=400)
+            user = None
 
-            # Valida as credenciais contra a tabela de usuários do sistema.
-            user = authenticate(request, username=username, password=password)
+            # Mantém o login tradicional do Django, caso seja necessário.
+            if username and password:
+                user = authenticate(request, username=username, password=password)
+
+            # Fluxo principal do sistema: autenticação por CPF e COREN.
+            elif cpf_profissional and registro_profissional:
+                try:
+                    user = Usuario.objects.get(
+                        cpf_profissional=cpf_profissional,
+                        registro_profissional=registro_profissional,
+                        tipo__in=['E', 'T'],
+                    )
+                except Usuario.DoesNotExist:
+                    user = None
+            else:
+                return JsonResponse({"erro": "Parâmetros ausentes para login."}, status=400)
 
             if user is not None:
 
@@ -43,7 +57,9 @@ class LoginAPIView(View):
                         "usuario": {
                             "username": user.username,
                             "email": user.email,
-                            "tipo": user.tipo
+                            "tipo": user.tipo,
+                            "cpf_profissional": user.cpf_profissional,
+                            "registro_profissional": user.registro_profissional,
                         }
                     }, status=200)
 
