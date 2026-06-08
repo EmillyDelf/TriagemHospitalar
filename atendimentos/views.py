@@ -7,13 +7,22 @@ from django.db.models import Case, When, IntegerField
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Triagem, Paciente
+from .models import Triagem, Paciente, Prioridade
+
+
+class JsonLoginRequiredMixin(LoginRequiredMixin):
+    """Garante que APIs retornem JSON em vez de HTML de login para requisições AJAX."""
+
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return JsonResponse({"erro": "Usuário sem permissão para acessar este recurso."}, status=403)
+        return JsonResponse({"erro": "Usuário não autenticado. Faça login."}, status=401)
 
 
 # API responsável pela consulta da fila de triagem e cadastro de novas triagens.
 # O acesso é restrito aos perfis autorizados pelo sistema.
 @method_decorator(csrf_exempt, name='dispatch')
-class TriagemListCreateAPI(LoginRequiredMixin, UserPassesTestMixin, View):
+class TriagemListCreateAPI(JsonLoginRequiredMixin, UserPassesTestMixin, View):
     """
     Endpoint para controle da Fila de Espera por prioridade (GET)
     e inserção de novas Triagens (POST).
@@ -103,14 +112,48 @@ class TriagemListCreateAPI(LoginRequiredMixin, UserPassesTestMixin, View):
             return JsonResponse({"erro": str(e)}, status=400)
 
 
+# API responsável pela listagem de prioridades de triagem.
+@method_decorator(csrf_exempt, name='dispatch')
+class PrioridadeListAPI(View):
+    """
+    Endpoint para listagem de prioridades.
+    Não exige autenticação para GET.
+    """
+
+    def get(self, request, *args, **kwargs):
+        try:
+            prioridades = list(Prioridade.objects.order_by('id').values(
+                'id', 'nome_prioridade', 'tempo_estimado'
+            ))
+            return JsonResponse({"prioridades": prioridades}, status=200)
+        except Exception as e:
+            return JsonResponse({"erro": str(e)}, status=400)
+
+
 # API responsável pelas operações de cadastro, edição e exclusão
 # de pacientes do sistema hospitalar.
 @method_decorator(csrf_exempt, name='dispatch')
-class PacienteAPI(LoginRequiredMixin, View):
+class PacienteListCreateAPI(JsonLoginRequiredMixin, View):
     """
-    Endpoint Unificado para o CRUD REST total do Paciente.
-    Trata de forma nativa POST (Criar), PUT (Editar) e DELETE (Excluir).
+    Endpoint para listagem e criação de pacientes.
+
+    GET: lista pacientes sem exigir sessão ativa.
+    POST: cria paciente apenas para usuário autenticado.
     """
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.method == 'GET':
+            return View.dispatch(self, request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            pacientes = list(Paciente.objects.order_by('nome_paciente').values(
+                'id', 'nome_paciente', 'cpf_paciente', 'data_nascimento'
+            ))
+            return JsonResponse({"pacientes": pacientes}, status=200)
+        except Exception as e:
+            return JsonResponse({"erro": str(e)}, status=400)
 
     def post(self, request, *args, **kwargs):
         try:
@@ -133,6 +176,13 @@ class PacienteAPI(LoginRequiredMixin, View):
 
         except Exception as e:
             return JsonResponse({"erro": str(e)}, status=400)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class PacienteAPI(JsonLoginRequiredMixin, View):
+    """
+    Endpoint para edição e exclusão de pacientes.
+    """
 
     def put(self, request, pk, *args, **kwargs):
         try:
@@ -161,7 +211,6 @@ class PacienteAPI(LoginRequiredMixin, View):
 
     def delete(self, request, pk, *args, **kwargs):
         try:
-            # Exclusão permanente do cadastro do paciente.
             paciente = Paciente.objects.get(pk=pk)
             paciente.delete()
 

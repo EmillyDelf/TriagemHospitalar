@@ -29,19 +29,21 @@ export default function CadastroPaciente() {
     }
 
     try {
-      await createPaciente({
+      const { id } = await createPaciente({
         nome_paciente: nomePaciente,
         cpf_paciente: cpfLimpo,
         data_nascimento: dataNascimento,
       })
 
+      /* Guarda o último paciente cadastrado para pré-seleção na tela de triagem. */
       sessionStorage.setItem(
         "ultimo_paciente_cadastrado",
-        JSON.stringify({ nomePaciente, cpfPaciente: cpfLimpo }),
+        JSON.stringify({ id, nomePaciente, cpfPaciente: cpfLimpo }),
       )
 
       setMensagem("Paciente cadastrado com sucesso.")
       setErro("")
+      /* Após cadastrar, redireciona para a triagem. */
       navigate("/triagem")
     } catch (error) {
       setMensagem("")

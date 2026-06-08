@@ -1,8 +1,9 @@
 import "../styles/Triagem.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState, type FormEvent, type MouseEvent } from "react";
 import {
+  createPaciente,
   createTriagem,
   getPacientes,
   getPrioridades,
@@ -23,6 +24,9 @@ export default function Triagem() {
   const [observacoes, setObservacoes] = useState("")
   const [mensagem, setMensagem] = useState("")
   const [erro, setErro] = useState("")
+  const [nomePacienteNovo, setNomePacienteNovo] = useState("")
+  const [dataNascimentoNovo, setDataNascimentoNovo] = useState("")
+  const [cpfPacienteNovo, setCpfPacienteNovo] = useState("")
 
   const prioridadesPorNome = useMemo(() => {
     return prioridades.reduce<Record<string, PrioridadeAPI>>((acumulador, prioridade) => {
@@ -31,7 +35,8 @@ export default function Triagem() {
     }, {})
   }, [prioridades])
 
-  const pacienteSelecionado = pacienteId || (pacientes[0] ? String(pacientes[0].id) : "")
+  const navigate = useNavigate()
+  const pacienteSelecionado = pacienteId
   const prioridadeSelecionada = prioridadeId || (prioridades[0] ? String(prioridades[0].id) : "")
 
   useEffect(() => {
@@ -42,8 +47,33 @@ export default function Triagem() {
           getPrioridades(),
         ])
 
+        /* Verifica se veio de um cadastro recente, para selecionar o paciente automaticamente. */
+        const ultimoPacienteCadastrado = sessionStorage.getItem("ultimo_paciente_cadastrado")
+        let ultimoPacienteId: number | null = null
+
+        if (ultimoPacienteCadastrado) {
+          try {
+            const parsed = JSON.parse(ultimoPacienteCadastrado)
+            ultimoPacienteId = parsed?.id ?? null
+          } catch {
+            ultimoPacienteId = null
+          }
+        }
+
         setPacientes(pacientesResponse.pacientes)
         setPrioridades(prioridadesResponse.prioridades)
+
+        if (
+          ultimoPacienteId !== null &&
+          pacientesResponse.pacientes.some((paciente) => paciente.id === ultimoPacienteId)
+        ) {
+          /* Se o paciente recém-cadastrado existe na lista, usa seu ID no select. */
+          setPacienteId(String(ultimoPacienteId))
+          sessionStorage.removeItem("ultimo_paciente_cadastrado")
+        } else if (pacientesResponse.pacientes.length > 0) {
+          /* Seleciona o primeiro paciente carregado por padrão para mostrar a lista. */
+          setPacienteId(String(pacientesResponse.pacientes[0].id))
+        }
       } catch (error) {
         setErro(error instanceof Error ? error.message : "Falha ao carregar dados da triagem.")
       }
@@ -52,6 +82,41 @@ export default function Triagem() {
 
     carregarDados()
   }, [])
+
+  async function handleCreatePaciente() {
+    const cpfLimpo = cpfPacienteNovo.replace(/\D/g, "")
+
+    if (!nomePacienteNovo || !dataNascimentoNovo || cpfLimpo.length !== 11) {
+      setErro("Preencha nome, data de nascimento e CPF válido para cadastrar o paciente.")
+      return
+    }
+
+    try {
+      const { id } = await createPaciente({
+        nome_paciente: nomePacienteNovo,
+        cpf_paciente: cpfLimpo,
+        data_nascimento: dataNascimentoNovo,
+      })
+
+      const novoPaciente: PacienteAPI = {
+        id,
+        nome_paciente: nomePacienteNovo,
+        cpf_paciente: cpfLimpo,
+        data_nascimento: dataNascimentoNovo,
+      }
+
+      setPacientes((atual) => [...atual, novoPaciente])
+      setPacienteId(String(id))
+      setMensagem("Paciente cadastrado com sucesso e selecionado para triagem.")
+      setErro("")
+      setNomePacienteNovo("")
+      setDataNascimentoNovo("")
+      setCpfPacienteNovo("")
+    } catch (error) {
+      setMensagem("")
+      setErro(error instanceof Error ? error.message : "Falha ao cadastrar paciente.")
+    }
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -93,7 +158,7 @@ export default function Triagem() {
           .join("\n"),
       })
 
-      setMensagem("Triagem registrada com sucesso.")
+      setMensagem("Triagem registrada com sucesso. Redirecionando para a fila...")
       setErro("")
       setSintomas("")
       setObservacoes("")
@@ -101,6 +166,8 @@ export default function Triagem() {
       setDiastolica("")
       setTemperatura("")
       setFrequenciaCardiaca("")
+
+      navigate("/fila")
     } catch (error) {
       setMensagem("")
       setErro(error instanceof Error ? error.message : "Falha ao salvar a triagem.")
@@ -113,7 +180,7 @@ export default function Triagem() {
     try {
       await logoutProfessional()
     } catch {
-      // Se a sessão já expirou, só limpa o estado local.
+      /* Se a sessão já expirou, só limpa o estado local. */
     } finally {
       sessionStorage.removeItem("auth_user")
       window.location.href = "/login"
@@ -167,13 +234,40 @@ export default function Triagem() {
                       onChange={(event) => setPacienteId(event.target.value)}
                       required
                     >
-                      <option value="">Selecione um paciente</option>
+                      <option value="" disabled>
+                        Selecione um paciente
+                      </option>
                       {pacientes.map((paciente) => (
                         <option key={paciente.id} value={paciente.id}>
                           {paciente.nome_paciente} - {paciente.cpf_paciente}
                         </option>
                       ))}
                     </select>
+                  </div>
+
+                  <div className="campo-formulario campo-largo cadastro-paciente-triagem">
+                    <h3>Cadastrar Novo Paciente</h3>
+                    <input
+                      type="text"
+                      placeholder="Nome do paciente"
+                      value={nomePacienteNovo}
+                      onChange={(event) => setNomePacienteNovo(event.target.value)}
+                    />
+                    <input
+                      type="date"
+                      placeholder="Data de nascimento"
+                      value={dataNascimentoNovo}
+                      onChange={(event) => setDataNascimentoNovo(event.target.value)}
+                    />
+                    <input
+                      type="text"
+                      placeholder="CPF"
+                      value={cpfPacienteNovo}
+                      onChange={(event) => setCpfPacienteNovo(event.target.value)}
+                    />
+                    <button type="button" className="botao-cadastrar-paciente" onClick={handleCreatePaciente}>
+                      Cadastrar e Selecionar
+                    </button>
                   </div>
 
                   <div className="campo-formulario campo-largo">
@@ -217,9 +311,9 @@ export default function Triagem() {
                       id="temp"
                       name="temp"
                       placeholder="Ex: 37.5"
-                     value={temperatura}
-                     onChange={(event) => setTemperatura(event.target.value)}
-                     required/>
+                      value={temperatura}
+                      onChange={(event) => setTemperatura(event.target.value)}
+                      required/>
                   </div>
 
                   <div className="campo-formulario">
@@ -284,7 +378,6 @@ export default function Triagem() {
 
                 <div className="classificacao-risco">
                   <div className="classificacao-risco">
-                 
                     {[
                       {
                         nome: "Vermelho",

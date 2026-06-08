@@ -49,15 +49,25 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   })
 
   let payload: any = null
+  let textBody: string | null = null
 
   try {
     payload = await response.json()
   } catch {
-    payload = null
+    try {
+      textBody = await response.text()
+    } catch {
+      textBody = null
+    }
   }
 
   if (!response.ok) {
-    throw new Error(payload?.erro || payload?.message || 'Falha na comunicação com a API.')
+    // Se a resposta não é JSON válido, inclui o corpo bruto e o status HTTP no erro.
+    const errorMessage =
+      payload?.erro ||
+      payload?.message ||
+      (textBody ? `${textBody}` : `Falha na comunicação com a API. Código ${response.status}.`)
+    throw new Error(errorMessage)
   }
 
   return payload as T

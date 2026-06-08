@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+# Comando para popular o banco de dados com dados de teste usando a biblioteca Faker.
 from faker import Faker
 from usuarios.models import Usuario
 from atendimentos.models import Paciente, Prioridade, Triagem
