@@ -202,6 +202,7 @@ export default function Triagem() {
                   <label>Temperatura</label>
                   <input
                     type="number"
+                    placeholder="36.5"
                     value={temperatura}
                     onChange={(e) => setTemperatura(e.target.value)}
                     required
@@ -212,6 +213,7 @@ export default function Triagem() {
                   <label>Frequência Cardíaca</label>
                   <input
                     type="number"
+                    placeholder="80"
                     value={frequenciaCardiaca}
                     onChange={(e) => setFrequenciaCardiaca(e.target.value)}
                     required
